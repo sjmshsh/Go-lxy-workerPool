@@ -8,6 +8,10 @@ import (
 )
 
 type Pool struct {
+	PreAlloc bool // 是否在创建pool的时候就预创建workers, 默认值为false
+	// 当pool满的时候，新的Schedule调用是否阻塞当前goroutine。默认值：true
+	// 如果block = false，则Schedule返回ErrNoWorkerAvailInPool
+	Block    bool
 	capacity int            // workerpool大小
 	active   chan struct{}  // 对应架构图中的active channel
 	tasks    chan Task      // 对应架构图中的task channel
@@ -84,4 +88,8 @@ func (p *Pool) Schedule(t Task) error {
 	case p.tasks <- t:
 		return nil
 	}
+}
+
+func (p *Pool) Free() {
+
 }
